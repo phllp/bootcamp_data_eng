@@ -3,8 +3,10 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
 import pandas as pd
+import os
 
-DATA_FOLDER = '/home/phllp/dev/bootcamp_data_eng/modulo_04/docker-airflow/data'
+DATA_FOLDER = os.getcwd()
+print(DATA_FOLDER)
 # Argumentos default
 default_args = {
   'owner': 'felipe',
@@ -22,12 +24,12 @@ dag = DAG(
   'treino_02',
   description='Extrai dados do titanic da internet e calcula a idade media',
   default_args=default_args,
-  schedule_interval='*/2 * * * *'
+  schedule_interval=None
 )
 
 get_data = BashOperator(
   task_id='get_data',
-  bash_command=F'curl http://127.0.0.1:5000/titanic-data -o {DATA_FOLDER}/train.csv',
+  bash_command=F'curl -k https://raw.githubusercontent.com/phllp/public_datasets/main/train.csv -o {DATA_FOLDER}/train.csv',
   dag=dag
 )
 
@@ -49,6 +51,7 @@ calcula_idade_media = PythonOperator(
 print_mean_age = PythonOperator(
   task_id='print_mean_age',
   python_callable=print_age,
+  provide_context=True,
   dag=dag
 )
 
