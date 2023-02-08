@@ -21,7 +21,7 @@ dag = DAG(
   'treino_01',
   description='Basico de BashOperator e PythonOperator',
   default_args=default_args,
-  schedule_interval=timedelta(minutes=2)
+  schedule_interval='@daily'
 )
 
 # Comecando a adicionar tarefas
